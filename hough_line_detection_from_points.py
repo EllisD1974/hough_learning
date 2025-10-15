@@ -59,7 +59,7 @@ accumulator, thetas, rhos = hough_transform(edge_points_rotated)
 
 
 # Find top N lines
-N = 25
+N = 50
 indices = np.argpartition(accumulator.flatten(), -N)[-N:]
 rho_idx, theta_idx = np.unravel_index(indices, accumulator.shape)
 
