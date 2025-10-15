@@ -10,3 +10,5 @@
 ## Second attempt at multi-line detection, using a threshold instead of N
 ![Second attempt using threshold](images/attempt2_multi_hough_line_detection_using_threshold_value_ex1.PNG)
 
+## Third attempt, enforcing unique lines
+![Third attempt enforcing unique lines](images/attempt3_multi_hough_line_detection_enforcing_unique_lines_ex1.PNG)

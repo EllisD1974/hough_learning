@@ -63,8 +63,51 @@ accumulator, thetas, rhos = hough_transform(edge_points_rotated)
 # indices = np.argpartition(accumulator.flatten(), -N)[-N:]
 # rho_idx, theta_idx = np.unravel_index(indices, accumulator.shape)
 
-vote_threshold = 60  # Adjust based on your image size
-rho_idx, theta_idx = np.where(accumulator > vote_threshold)
+# vote_threshold = 60  # Adjust based on your image size
+# rho_idx, theta_idx = np.where(accumulator > vote_threshold)
+
+def get_top_hough_peaks(accumulator, num_peaks=5, nms_size=10):
+    """
+    Find top N peaks in a Hough accumulator using non-maximum suppression.
+
+    Parameters
+    ----------
+    accumulator : np.ndarray
+        Hough accumulator array.
+    num_peaks : int
+        Number of peaks (lines) to return.
+    nms_size : int
+        Non-maximum suppression window size (suppresses nearby peaks).
+
+    Returns
+    -------
+    list of (rho_idx, theta_idx)
+        List of accumulator indices for peaks.
+    """
+    peaks = []
+    acc_copy = accumulator.copy()
+
+    for _ in range(num_peaks):
+        # Find index of current max
+        max_idx = np.unravel_index(np.argmax(acc_copy), acc_copy.shape)
+        peaks.append(max_idx)
+
+        # Suppress neighborhood (remove nearby duplicate line detections)
+        r, t = max_idx
+        r0, r1 = max(0, r - nms_size), min(acc_copy.shape[0], r + nms_size)
+        t0, t1 = max(0, t - nms_size), min(acc_copy.shape[1], t + nms_size)
+        acc_copy[r0:r1, t0:t1] = 0
+
+    return peaks
+
+# Instead of using argpartition, do this:
+num_peaks = 5
+nms_size = 10
+peaks = get_top_hough_peaks(accumulator, num_peaks=num_peaks, nms_size=nms_size)
+
+# Convert peaks into rho_idx and theta_idx
+rho_idx = [p[0] for p in peaks]
+theta_idx = [p[1] for p in peaks]
 
 def get_hough_lines_clamped(points, rhos, thetas, rho_idx, theta_idx):
     """
@@ -133,7 +176,7 @@ clamped_hough_lines = get_hough_lines_clamped(edge_points_rotated, rhos, thetas,
 
 
 # plot_lines(rhos, thetas, rho_idx, theta_idx, img)
-plot_image(img, title=f"Edge points image, {vote_threshold=}", cmap="gray")
+plot_image(img, title=f"Edge points image, {num_peaks=}, {nms_size=}", cmap="gray")
 plot_clamed_lines(clamped_hough_lines)
 plt.show()
 
