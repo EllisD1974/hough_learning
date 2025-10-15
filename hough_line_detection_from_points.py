@@ -18,7 +18,7 @@ from utils.np_img_utils import (
 # Random points with a definate line of points included
 # all_points = np.load("points.npy")
 
-img = load_img_as_np(Path("test_img_road.jpg"))
+img = load_img_as_np(Path("images/test_img_road.jpg"))
 edge_points = detect_edge_points(img)
 
 edge_points_rotated = rotate_points_ccw(edge_points, img.shape)
