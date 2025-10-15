@@ -63,8 +63,11 @@ accumulator, thetas, rhos = hough_transform(edge_points_rotated)
 # indices = np.argpartition(accumulator.flatten(), -N)[-N:]
 # rho_idx, theta_idx = np.unravel_index(indices, accumulator.shape)
 
-# vote_threshold = 60  # Adjust based on your image size
-# rho_idx, theta_idx = np.where(accumulator > vote_threshold)
+# Step 1: find strong lines
+vote_threshold = 50  # TODO(nloewenthal): Tune this if image size changes
+accumulator_filtered = accumulator.copy()
+accumulator_filtered[accumulator_filtered < vote_threshold] = 0
+
 
 def get_top_hough_peaks(accumulator, num_peaks=5, nms_size=10):
     """
@@ -100,10 +103,10 @@ def get_top_hough_peaks(accumulator, num_peaks=5, nms_size=10):
 
     return peaks
 
-# Instead of using argpartition, do this:
+# Step 2: run NMS on pre-filtered accumulator
 num_peaks = 5
 nms_size = 10
-peaks = get_top_hough_peaks(accumulator, num_peaks=num_peaks, nms_size=nms_size)
+peaks = get_top_hough_peaks(accumulator_filtered, num_peaks=num_peaks, nms_size=nms_size)
 
 # Convert peaks into rho_idx and theta_idx
 rho_idx = [p[0] for p in peaks]
@@ -172,18 +175,22 @@ def get_hough_lines_clamped(points, rhos, thetas, rho_idx, theta_idx):
 
     return line_segments
 
+# Step 3: clamp the lines
 clamped_hough_lines = get_hough_lines_clamped(edge_points_rotated, rhos, thetas, rho_idx, theta_idx)
 
+# Step 4: Remove lines that were too small
+min_length = 40
+filtered_lines = [
+    line for line in clamped_hough_lines
+    if np.hypot(line[2] - line[0], line[3] - line[1]) > min_length
+]
 
 # plot_lines(rhos, thetas, rho_idx, theta_idx, img)
-plot_image(img, title=f"Edge points image, {num_peaks=}, {nms_size=}", cmap="gray")
+plot_image(img, title=f"Edge points image, {vote_threshold=}, {num_peaks=}, {nms_size=}, {min_length=}", cmap="gray")
 plot_clamed_lines(clamped_hough_lines)
 plt.show()
 
 pause = 1
-
-
-
 
 # # Existing 50 random points
 # points = np.random.rand(50, 2)
