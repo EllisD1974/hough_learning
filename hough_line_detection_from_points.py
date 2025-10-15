@@ -21,11 +21,13 @@ from utils.np_img_utils import (
 img = load_img_as_np(Path("images/test_img_road.jpg"))
 edge_points = detect_edge_points(img)
 
-edge_points_rotated = rotate_points_ccw(edge_points, img.shape)
+edge_points_rotated = np.fliplr(edge_points)
+# edge_points_rotated = rotate_points_ccw(edge_points, img.shape)
+
 
 img = get_edge_marked_img(edge_points_rotated)
 
-plot_image(img, title="Edge points image", cmap="gray")
+# plot_image(img, title="Edge points image", cmap="gray")
 
 
 def hough_transform(points, theta_steps=180, rho_resolution=1):
@@ -128,6 +130,7 @@ clamped_hough_lines = get_hough_lines_clamped(edge_points_rotated, rhos, thetas,
 
 
 # plot_lines(rhos, thetas, rho_idx, theta_idx, img)
+plot_image(img, title=f"Edge points image, {N=}", cmap="gray")
 plot_clamed_lines(clamped_hough_lines)
 plt.show()
 
