@@ -59,9 +59,12 @@ accumulator, thetas, rhos = hough_transform(edge_points_rotated)
 
 
 # Find top N lines
-N = 50
-indices = np.argpartition(accumulator.flatten(), -N)[-N:]
-rho_idx, theta_idx = np.unravel_index(indices, accumulator.shape)
+# N = 50
+# indices = np.argpartition(accumulator.flatten(), -N)[-N:]
+# rho_idx, theta_idx = np.unravel_index(indices, accumulator.shape)
+
+vote_threshold = 60  # Adjust based on your image size
+rho_idx, theta_idx = np.where(accumulator > vote_threshold)
 
 def get_hough_lines_clamped(points, rhos, thetas, rho_idx, theta_idx):
     """
@@ -130,7 +133,7 @@ clamped_hough_lines = get_hough_lines_clamped(edge_points_rotated, rhos, thetas,
 
 
 # plot_lines(rhos, thetas, rho_idx, theta_idx, img)
-plot_image(img, title=f"Edge points image, {N=}", cmap="gray")
+plot_image(img, title=f"Edge points image, {vote_threshold=}", cmap="gray")
 plot_clamed_lines(clamped_hough_lines)
 plt.show()
 
