@@ -19,7 +19,7 @@ from utils.np_img_utils import (
 # all_points = np.load("points.npy")
 
 img = load_img_as_np(Path("images/test_img_road.jpg"))
-edge_points = detect_edge_points(img)
+edge_points = detect_edge_points(img, threshold=30)
 
 edge_points_rotated = np.fliplr(edge_points)
 # edge_points_rotated = rotate_points_ccw(edge_points, img.shape)
@@ -105,7 +105,7 @@ def get_top_hough_peaks(accumulator, num_peaks=5, nms_size=10):
 
 # Step 2: run NMS on pre-filtered accumulator
 num_peaks = 5
-nms_size = 10
+nms_size = 30
 peaks = get_top_hough_peaks(accumulator_filtered, num_peaks=num_peaks, nms_size=nms_size)
 
 # Convert peaks into rho_idx and theta_idx

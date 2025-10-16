@@ -38,12 +38,12 @@ def load_img_as_np(img_path: Path) -> np.array:
 
     return img
 
-def detect_edge_points(img: np.array) -> np.array:
+def detect_edge_points(img: np.array, threshold=50) -> np.array:
     # Simple edge detection (threshold gradient)
     edges = np.zeros_like(img)
     gx, gy = np.gradient(img.astype(float))
     grad = np.hypot(gx, gy)
-    edges[grad > 50] = 1  # threshold
+    edges[grad > threshold] = 1  # threshold
 
     # Extract edge points (y, x)
     edge_points = np.column_stack(np.nonzero(edges))

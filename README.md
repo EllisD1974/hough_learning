@@ -16,3 +16,5 @@
 ### Fourth attempt, this uses the previous techniques as well as a minimum line length
 ![Fourth attempt doing all steps](images/attempt4_multi_hough_line_detection_multiple_filtering_steps_ex1.PNG)
 
+Adjusted some parameters
+![Fourth attempt doing all steps, slight adjustment](images/attempt4_multi_hough_line_detection_multiple_filtering_steps_ex2.PNG)
